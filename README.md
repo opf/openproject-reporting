@@ -14,17 +14,17 @@ version greater or equal to *3.0.0*. It also requires the [ReportingEngine Rails
 Installation
 ------------
 
-Reporting depends on the OpenProject Costs plugin. If you have not installed it yet, you can do so by adding the following line to the `Gemfile.plugins` in your OpenProject installation:
+Reporting depends on the OpenProject Costs plugin. If you have not installed it yet, you can do so by adding the following line to the `Gemfile.plugins` in your OpenProject installation (if you use a different OpenProject version than OpenProject 4.1, adapt `:branch => "stable/4.1"` to your OpenProject version):
 
-`gem "openproject-costs", git: "https://github.com/finnlabs/openproject-costs.git", :branch => "stable"`
+`gem "openproject-costs", git: "https://github.com/finnlabs/openproject-costs.git", :branch => "stable/4.1"`
 
-Furthermore, OpenProject reporting depends on the ReportingEngine which should be installed by adding the following line to your `Gemfile.plugins` in your OpenProject installation folder:
+Furthermore, OpenProject reporting depends on the ReportingEngine which should be installed by adding the following line to your `Gemfile.plugins` in your OpenProject installation folder (if you use a different OpenProject version than OpenProject 4.1, adapt `:branch => "stable/4.1"` to your OpenProject version):
 
-`gem "reporting_engine", git: "https://github.com/finnlabs/reporting_engine.git", :branch => "stable"`
+`gem "reporting_engine", git: "https://github.com/finnlabs/reporting_engine.git", :branch => "stable/4.1"`
 
-Finally, add the following line to your `Gemfile.plugins` in your OpenProject installation folder to use the Reporting plugin:
+Finally, add the following line to your `Gemfile.plugins` in your OpenProject installation folder to use the Reporting plugin (if you use a different OpenProject version than OpenProject 4.1, adapt `:branch => "stable/4.1"` to your OpenProject version):
 
-`gem "openproject-reporting", git: "https://github.com/finnlabs/openproject-reporting.git", :branch => "stable"`
+`gem "openproject-reporting", git: "https://github.com/finnlabs/openproject-reporting.git", :branch => "stable/4.1"`
 
 Afterwards, run:
 
@@ -36,8 +36,8 @@ Deinstallation
 
 Remove the lines
 
-`gem "reporting_engine", git: "https://github.com/finnlabs/reporting_engine.git", :branch => "stable"`
-`gem "openproject-reporting", git: "https://github.com/finnlabs/openproject-reporting.git", :branch => "stable"`
+`gem "reporting_engine", git: "https://github.com/finnlabs/reporting_engine.git", :branch => "stable/4.1"`
+`gem "openproject-reporting", git: "https://github.com/finnlabs/openproject-reporting.git", :branch => "stable/4.1"`
 
 from your `Gemfile.plugins` in your OpenProject installation folder and run:
 
