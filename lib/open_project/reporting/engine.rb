@@ -55,6 +55,11 @@ module OpenProject::Reporting
         )
       }
 
+    # Cost reports should replace the default time entries menu item
+    Redmine::MenuManager.map(:top_menu) do |menu|
+      menu.delete(:time_sheet)
+    end
+
     menu :project_menu, :cost_reports,
          {controller: 'cost_reports', action: 'index'},
          param: :project_id,
