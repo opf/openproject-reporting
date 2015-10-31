@@ -67,7 +67,11 @@ describe User, "#destroy", type: :model do
       end
 
       it { expect(CostQuery.find_by_id(public_query.id).deserialize.filters.any?{ |f| f.is_a?(filter) }).to be_truthy }
-      it { expect(CostQuery.find_by_id(public_query.id).deserialize.filters.detect{ |f| f.is_a?(filter) }.values).to eq([user2.id.to_s]) }
+      it {
+        expect(CostQuery.find_by_id(public_query.id).deserialize.filters.detect{ |f|
+          f.is_a?(filter)
+        }.values).to eq([user2.id.to_s])
+      }
     end
 
     describe "WHEN the filter has the deleted user and another user as it's value" do
@@ -78,8 +82,16 @@ describe User, "#destroy", type: :model do
         user.destroy
       end
 
-      it { expect(CostQuery.find_by_id(public_query.id).deserialize.filters.any?{ |f| f.is_a?(filter) }).to be_truthy }
-      it { expect(CostQuery.find_by_id(public_query.id).deserialize.filters.detect{ |f| f.is_a?(filter) }.values).to eq([user2.id.to_s]) }
+      it {
+        expect(CostQuery.find_by_id(public_query.id).deserialize.filters.any?{ |f|
+          f.is_a?(filter)
+        }).to be_truthy
+      }
+      it {
+        expect(CostQuery.find_by_id(public_query.id).deserialize.filters.detect{ |f|
+          f.is_a?(filter)
+        }.values).to eq([user2.id.to_s])
+      }
     end
   end
 

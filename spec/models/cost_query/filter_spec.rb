@@ -27,11 +27,11 @@ describe CostQuery, type: :model, reporting_query_helper: true do
   let!(:user) { FactoryGirl.create(:user, member_in_project: project) }
 
   def create_work_package_with_entry(entry_type, work_package_params={}, entry_params = {})
-    work_package_params = {project: project}.merge!(work_package_params)
+    work_package_params = { project: project }.merge!(work_package_params)
     work_package = FactoryGirl.create(:work_package, work_package_params)
-    entry_params = {work_package: work_package,
-                    project: work_package_params[:project],
-                    user: user}.merge!(entry_params)
+    entry_params = { work_package: work_package,
+                     project: work_package_params[:project],
+                     user: user }.merge!(entry_params)
     FactoryGirl.create(entry_type, entry_params)
     work_package
   end
@@ -63,27 +63,33 @@ describe CostQuery, type: :model, reporting_query_helper: true do
       [CostQuery::Filter::ProjectId,        'project',    "project_id",      2],
       [CostQuery::Filter::UserId,           'user',       "user_id",         2],
       [CostQuery::Filter::CostTypeId,       'cost_type',  "cost_type_id",    1],
-      [CostQuery::Filter::WorkPackageId,    'work_package',      "work_package_id", 2],
-      [CostQuery::Filter::ActivityId, 'activity',   "activity_id",     1],
+      [CostQuery::Filter::WorkPackageId,    'work_package', "work_package_id", 2],
+      [CostQuery::Filter::ActivityId, 'activity', "activity_id", 1],
     ].each do |filter, object_name, field, expected_count|
       describe filter do
         let!(:non_matching_entry) { FactoryGirl.create(:cost_entry) }
         let!(:object) { send(object_name) }
         let!(:author) { FactoryGirl.create(:user, member_in_project: project) }
-        let!(:work_package) { FactoryGirl.create(:work_package, project: project,
-                                                 author: author) }
+        let!(:work_package) {
+          FactoryGirl.create(:work_package, project: project,
+                                            author: author)
+        }
         let!(:cost_type) { FactoryGirl.create(:cost_type) }
-        let!(:cost_entry) { FactoryGirl.create(:cost_entry, work_package: work_package,
-                                               user: user,
-                                               project: project,
-                                               cost_type: cost_type) }
+        let!(:cost_entry) {
+          FactoryGirl.create(:cost_entry, work_package: work_package,
+                                          user: user,
+                                          project: project,
+                                          cost_type: cost_type)
+        }
         let!(:activity) { FactoryGirl.create(:time_entry_activity) }
-        let!(:time_entry) { FactoryGirl.create(:time_entry, work_package: work_package,
-                                               user: user,
-                                               project: project,
-                                               activity: activity) }
+        let!(:time_entry) {
+          FactoryGirl.create(:time_entry, work_package: work_package,
+                                          user: user,
+                                          project: project,
+                                          activity: activity)
+        }
 
-        it "should only return entries from the given #{filter.to_s}" do
+        it "should only return entries from the given #{filter}" do
           @query.filter field, value: object.id
           @query.result.each do |result|
             expect(result[field].to_s).to eq(object.id.to_s)
@@ -116,18 +122,24 @@ describe CostQuery, type: :model, reporting_query_helper: true do
     describe CostQuery::Filter::AuthorId do
       let!(:non_matching_entry) { FactoryGirl.create(:cost_entry) }
       let!(:author) { FactoryGirl.create(:user, member_in_project: project) }
-      let!(:work_package) { FactoryGirl.create(:work_package, project: project,
-                                               author: author) }
+      let!(:work_package) {
+        FactoryGirl.create(:work_package, project: project,
+                                          author: author)
+      }
       let!(:cost_type) { FactoryGirl.create(:cost_type) }
-      let!(:cost_entry) { FactoryGirl.create(:cost_entry, work_package: work_package,
-                                             user: user,
-                                             project: project,
-                                             cost_type: cost_type) }
+      let!(:cost_entry) {
+        FactoryGirl.create(:cost_entry, work_package: work_package,
+                                        user: user,
+                                        project: project,
+                                        cost_type: cost_type)
+      }
       let!(:activity) { FactoryGirl.create(:time_entry_activity) }
-      let!(:time_entry) { FactoryGirl.create(:time_entry, work_package: work_package,
-                                             user: user,
-                                             project: project,
-                                             activity: activity) }
+      let!(:time_entry) {
+        FactoryGirl.create(:time_entry, work_package: work_package,
+                                        user: user,
+                                        project: project,
+                                        activity: activity)
+      }
 
       it "should only return entries from the given CostQuery::Filter::AuthorId" do
         @query.filter 'author_id', value: author.id
@@ -160,26 +172,33 @@ describe CostQuery, type: :model, reporting_query_helper: true do
 
     it "filters spent_on" do
       @query.filter :spent_on, operator: 'w'
-      expect(@query.result.count).to eq(Entry.all.select { |e| e.spent_on.cweek == TimeEntry.all.first.spent_on.cweek }.count)
+      expect(@query.result.count).to eq(
+        Entry.all.count { |e|
+          e.spent_on.cweek == TimeEntry.all.first.spent_on.cweek
+        }
+      )
     end
 
     it "filters created_on" do
       @query.filter :created_on, operator: 't'
-      # we assume that some of our fixtures set created_on to Time.now
-      expect(@query.result.count).to eq(Entry.all.select { |e| e.created_on.to_date == Date.today }.count)
+      # we assume that some of our fixtures set created_on to Time.zone.now
+      expect(@query.result.count).to eq(
+        Entry.all.count { |e| e.created_on.to_date == Time.zone.now }
+      )
     end
 
     it "filters updated_on" do
-      @query.filter :updated_on, value: Date.today.years_ago(20), operator: '>d'
+      @query.filter :updated_on, value: Time.zone.now.years_ago(20), operator: '>d'
       # we assume that our were updated in the last 20 years
-      expect(@query.result.count).to eq(Entry.all.select { |e| e.updated_on.to_date > Date.today.years_ago(20) }.count)
+      expect(@query.result.count).to eq(
+        Entry.all.count { |e| e.updated_on.to_date > Time.zone.now.years_ago(20) }
+      )
     end
 
     it "filters user_id" do
-      old_user = User.current
       # create non-matching entry
       anonymous = FactoryGirl.create(:anonymous)
-      create_work_package_with_time_entry({}, {user: anonymous})
+      create_work_package_with_time_entry({}, { user: anonymous })
       # create matching entry
       create_work_package_with_time_entry()
       @query.filter :user_id, value: user.id, operator: '='
@@ -195,13 +214,15 @@ describe CostQuery, type: :model, reporting_query_helper: true do
 
       def create_matching_object_with_time_entries(factory, work_package_field, entry_count)
         object = FactoryGirl.create(factory)
-        create_work_packages_and_time_entries(entry_count, {work_package_field => object})
+        create_work_packages_and_time_entries(entry_count, { work_package_field => object })
         object
       end
 
       it "filters overridden_costs" do
         @query.filter :overridden_costs, operator: 'y'
-        expect(@query.result.count).to eq(Entry.all.select { |e| not e.overridden_costs.nil? }.count)
+        expect(@query.result.count).to eq(Entry.all.count { |e|
+          !e.overridden_costs.nil?
+        })
       end
 
       it "filters status" do
@@ -252,25 +273,23 @@ describe CostQuery, type: :model, reporting_query_helper: true do
       end
 
       it "filters subject" do
-        matching_work_package = create_work_package_with_time_entry(subject: 'matching subject')
+        create_work_package_with_time_entry(subject: 'matching subject')
         @query.filter :subject, operator: '=', value: 'matching subject'
         expect(@query.result.count).to eq(1)
       end
 
       it "filters start" do
         start_date = Date.new(2013, 1, 1)
-        matching_work_package = create_work_package_with_time_entry(start_date: start_date)
+        create_work_package_with_time_entry(start_date: start_date)
         @query.filter :start_date, operator: '=d', value: start_date
         expect(@query.result.count).to eq(1)
-        #Entry.all.select { |e| e.work_package.start_date == WorkPackage.all(:order => "id ASC").first.start_date }.count
       end
 
       it "filters due date" do
         due_date = Date.new(2013, 1, 1)
-        matching_work_package = create_work_package_with_time_entry(due_date: due_date)
+        create_work_package_with_time_entry(due_date: due_date)
         @query.filter :due_date, operator: '=d', value: due_date
         expect(@query.result.count).to eq(1)
-        #Entry.all.select { |e| e.work_package.due_date == WorkPackage.all(:order => "id ASC").first.due_date }.count
       end
 
       it "raises an error if operator is not supported" do
@@ -289,7 +308,9 @@ describe CostQuery, type: :model, reporting_query_helper: true do
       CostQuery::Filter::TypeId
     ].each do |filter|
       it "should only allow default operators for #{filter}" do
-        expect(filter.new.available_operators.uniq.sort).to eq(CostQuery::Operator.default_operators.uniq.sort)
+        expect(filter.new.available_operators.uniq.sort).to eq(
+          CostQuery::Operator.default_operators.uniq.sort
+        )
       end
     end
 
@@ -300,7 +321,9 @@ describe CostQuery, type: :model, reporting_query_helper: true do
       CostQuery::Filter::FixedVersionId
     ].each do |filter|
       it "should only allow default+null operators for #{filter}" do
-        expect(filter.new.available_operators.uniq.sort).to eq((CostQuery::Operator.default_operators + CostQuery::Operator.null_operators).sort)
+        expect(filter.new.available_operators.uniq.sort).to eq(
+          (CostQuery::Operator.default_operators + CostQuery::Operator.null_operators).sort
+        )
       end
     end
 
@@ -313,7 +336,9 @@ describe CostQuery, type: :model, reporting_query_helper: true do
       CostQuery::Filter::DueDate
     ].each do |filter|
       it "should only allow time operators for #{filter}" do
-        expect(filter.new.available_operators.uniq.sort).to eq(CostQuery::Operator.time_operators.sort)
+        expect(filter.new.available_operators.uniq.sort).to eq(
+          CostQuery::Operator.time_operators.sort
+        )
       end
     end
 
@@ -361,7 +386,7 @@ describe CostQuery, type: :model, reporting_query_helper: true do
 
       it "should remove the custom field classes after it is deleted" do
         custom_field
-        class_name = filter_class_name_string(custom_field)
+        filter_class_name_string(custom_field)
         delete_work_package_custom_field(custom_field)
         expect { filter_class_name_string(custom_field).constantize }.to raise_error NameError
       end
@@ -414,7 +439,7 @@ describe CostQuery, type: :model, reporting_query_helper: true do
                              customized: work_package,
                              value: "125")
         end
-        work_package = create_work_package_with_entry(:cost_entry)
+        create_work_package_with_entry(:cost_entry)
         FactoryGirl.create(:custom_value,
                            custom_field: searchable_field,
                            value: "non-matching value")

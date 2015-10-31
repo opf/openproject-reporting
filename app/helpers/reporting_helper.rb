@@ -58,7 +58,11 @@ module ReportingHelper
   end
 
   def debug_fields(result, prefix = ', ')
-    prefix << result.fields.inspect << ', ' << result.important_fields.inspect << ', ' << result.key.inspect if params[:debug]
+    if params[:debug]
+      prefix << result.fields.inspect
+      prefix << ', ' << result.important_fields.inspect
+      prefix << ', ' << result.key.inspect
+    end
   end
 
   def month_name(index)
@@ -149,31 +153,38 @@ module ReportingHelper
     end
   end
 
-  def link_to_details(result)
-    return '' # unless result.respond_to? :fields # uncomment to display
-    session_filter = { operators: session[:report][:filters][:operators].dup, values: session[:report][:filters][:values].dup }
-    filters = result.fields.inject session_filter do |struct, (key, value)|
-      key = key.to_sym
-      case key
-      when :week
-        set_filter_options struct, :tweek, value.to_i.modulo(100)
-        set_filter_options struct, :tyear, value.to_i / 100
-      when :month, :year
-        set_filter_options struct, :"t#{key}", value
-      when :count, :units, :costs, :display_costs, :sum, :real_costs
-      else
-        set_filter_options struct, key, value
-      end
-      struct
-    end
-    options = { fields: filters[:operators].keys, set_filter: 1, action: :drill_down }
-    link_to '[+]', filters.merge(options), class: 'drill_down', title: l(:description_drill_down)
+  def link_to_details(_result)
+    ''
+    # return '' # unless result.respond_to? :fields # uncomment to display
+
+    # code below this line is not reachable
+    # session_filter = {
+    #   operators: session[:report][:filters][:operators].dup,
+    #   values: session[:report][:filters][:values].dup
+    # }
+    # filters = result.fields.inject session_filter do |struct, (key, value)|
+    #   key = key.to_sym
+    #   case key
+    #   when :week
+    #     set_filter_options struct, :tweek, value.to_i.modulo(100)
+    #     set_filter_options struct, :tyear, value.to_i / 100
+    #   when :month, :year
+    #     set_filter_options struct, :"t#{key}", value
+    #   when :count, :units, :costs, :display_costs, :sum, :real_costs
+    #   else
+    #     set_filter_options struct, key, value
+    #   end
+    #   struct
+    # end
+    # options = { fields: filters[:operators].keys, set_filter: 1, action: :drill_down }
+    # link_to '[+]', filters.merge(options), class: 'drill_down', title: l(:description_drill_down)
   end
 
   ##
   # Create the appropriate action for an entry with the type of log to use
   def action_for(result, options = {})
-    options.merge controller: result.fields['type'] == 'TimeEntry' ? 'timelog' : 'costlog', id: result.fields['id'].to_i
+    options.merge controller: result.fields['type'] == 'TimeEntry' ? 'timelog' : 'costlog',
+                  id: result.fields['id'].to_i
   end
 
   ##
@@ -206,7 +217,8 @@ module ReportingHelper
   end
 
   ##
-  # Finds the Filter-Class for as specific filter name while being careful with the filter_name parameter as it is user input.
+  # Finds the Filter-Class for as specific filter name while being careful with
+  # the filter_name parameter as it is user input.
   def filter_class(filter_name)
     klass = CostQuery::Filter.const_get(filter_name.to_s.camelize)
     return klass if klass.is_a? Class

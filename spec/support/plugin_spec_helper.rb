@@ -23,8 +23,8 @@ module OpenProject::Reporting
       role = FactoryGirl.create(:role, permissions: permissions)
 
       FactoryGirl.create(:member, project: project,
-                              principal: user,
-                              roles: [role])
+                                  principal: user,
+                                  roles: [role])
     end
   end
 end

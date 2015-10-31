@@ -49,7 +49,7 @@ module OpenProject::Reporting::Patches
         if @project.nil? || !@project.module_enabled?(:reporting_module)
           return index_without_reports_view
         end
-        filters = {operators: {}, values: {}}
+        filters = { operators: {}, values: {} }
 
         if @issue
           if @issue.respond_to?("lft")
@@ -67,7 +67,7 @@ module OpenProject::Reporting::Patches
 
         respond_to do |format|
           format.html {
-            session[::CostQuery.name.underscore.to_sym] = { filters: filters, groups: {rows: [], columns: []} }
+            session[::CostQuery.name.underscore.to_sym] = { filters: filters, groups: { rows: [], columns: [] } }
 
             redirect_to controller: "/cost_reports", action: "index", project_id: @project, unit: -1
           }

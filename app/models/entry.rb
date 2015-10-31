@@ -34,7 +34,8 @@ module Entry
       end
 
       def calculate(type, *args)
-        a, b = TimeEntry.calculate(type, *args), CostEntry.calculate(type, *args)
+        a = TimeEntry.calculate(type, *args)
+        b = CostEntry.calculate(type, *args)
         case type
         when :sum, :count then a + b
         when :avg then (a + b) / 2
@@ -65,7 +66,7 @@ module Entry
       def find_initial(options)         find_one  :find_initial,  options end
       def find_last(options)            find_one  :find_last,     options end
       def find_every(options)           find_many :find_every,    options end
-      def find_from_ids(args, options)  find_many :find_from_ids, options end
+      def find_from_ids(_args, options) find_many :find_from_ids, options end
 
       def find_one(*args)
         TimeEntry.send(*args) || CostEntry.send(*args)

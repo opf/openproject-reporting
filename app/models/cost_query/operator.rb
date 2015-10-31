@@ -20,7 +20,7 @@
 class CostQuery::Operator < Report::Operator
   # Operators from Redmine
   new "c", arity: 0, label: :label_closed do
-    def modify(query, field, *values)
+    def modify(query, field, *_values)
       raise "wrong field" if field.to_s.split('.').last != "status_id"
       query.where "(#{Status.table_name}.is_closed = #{quoted_true})"
       query
@@ -28,7 +28,7 @@ class CostQuery::Operator < Report::Operator
   end
 
   new "o", arity: 0, label: :label_open do
-    def modify(query, field, *values)
+    def modify(query, field, *_values)
       raise "wrong field" if field.to_s.split('.').last != "status_id"
       query.where "(#{Status.table_name}.is_closed = #{quoted_false})"
       query

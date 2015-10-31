@@ -50,7 +50,9 @@ class Widget::Table::SimpleTable < Widget::Table
     content_tag :tfoot do
       content_tag :tr do
         concat content_tag(:th, '', class: "result inner", colspan: @list.size)
-        concat content_tag(:th, show_result(@subject), (@show_units ? {class: "result right", colspan: "2"} : {class: "result right"}))
+        concat content_tag(:th, show_result(@subject),
+                                (@show_units ? { class: "result right", colspan: "2" } : { class: "result right" })
+                          )
       end
     end
   end
@@ -58,19 +60,19 @@ class Widget::Table::SimpleTable < Widget::Table
   def body
     content_tag :tbody do
       @subject.each do |result|
-        concat (content_tag :tr, class: cycle("odd", "even") do
-          concat (content_tag :td, :'raw-data' => raw_field(*result.fields.first) do
+        concat(content_tag :tr, class: cycle("odd", "even") {
+          concat(content_tag :td, 'raw-data': raw_field(*result.fields.first) {
             show_row result
-          end)
+          })
           if @show_units
-            concat (content_tag :td, :'raw-data' => result.units do
+            concat(content_tag :td, 'raw-data': result.units {
               show_result result, result.fields[:cost_type_id].to_i
-            end)
+            })
           end
-          concat (content_tag :td, :'raw-data' => result.real_costs do
+          concat(content_tag :td, 'raw-data': result.real_costs {
             show_result result
-          end)
-        end)
+          })
+        })
       end
     end
   end
