@@ -24,32 +24,52 @@ describe CostQuery, type: :model, reporting_query_helper: true do
   let!(:type) { FactoryGirl.create(:type) }
   let!(:project1){ FactoryGirl.create(:project_with_types, types: [type]) }
   let!(:work_package1) { FactoryGirl.create(:work_package, project: project1, type: type)}
-  let!(:time_entry1) { FactoryGirl.create(:time_entry, work_package: work_package1, project: project1, spent_on: Date.new(2012, 1, 1)) }
+  let!(:time_entry1) {
+    FactoryGirl.create(:time_entry, work_package: work_package1,
+                                    project: project1,
+                                    spent_on: Date.new(2012, 1, 1)
+                      )
+  }
   let!(:time_entry2) do
     time_entry2 = time_entry1.dup
     time_entry2.save!
     time_entry2
   end
   let!(:cost_object1) { FactoryGirl.create(:cost_object, project: project1) }
-  let!(:cost_entry1) { FactoryGirl.create(:cost_entry, work_package: work_package1, project: project1, spent_on: Date.new(2013, 2, 3)) }
+  let!(:cost_entry1) {
+    FactoryGirl.create(:cost_entry, work_package: work_package1,
+                                    project: project1,
+                                    spent_on: Date.new(2013, 2, 3)
+                      )
+  }
   let!(:cost_entry2) do
-    cost_entry2 =  cost_entry1.dup
+    cost_entry2 = cost_entry1.dup
     cost_entry2.save!
     cost_entry2
   end
 
   let!(:project2) { FactoryGirl.create(:project_with_types, types: [type]) }
   let!(:work_package2) { FactoryGirl.create(:work_package, project: project2, type: type) }
-  let!(:time_entry3) { FactoryGirl.create(:time_entry, work_package: work_package2, project: project2, spent_on: Date.new(2013, 2, 3)) }
+  let!(:time_entry3) {
+    FactoryGirl.create(:time_entry, work_package: work_package2,
+                                    project: project2,
+                                    spent_on: Date.new(2013, 2, 3)
+                      )
+  }
   let!(:time_entry4) do
     time_entry4 = time_entry3.dup
     time_entry4.save!
     time_entry4
   end
   let!(:cost_object2) { FactoryGirl.create(:cost_object, project: project2) }
-  let!(:cost_entry3) { FactoryGirl.create(:cost_entry, work_package: work_package2, project: project2, spent_on: Date.new(2012, 1, 1)) }
+  let!(:cost_entry3) {
+    FactoryGirl.create(:cost_entry, work_package: work_package2,
+                                    project: project2,
+                                    spent_on: Date.new(2012, 1, 1)
+                      )
+  }
   let!(:cost_entry4) do
-    cost_entry4 =  cost_entry3.dup
+    cost_entry4 = cost_entry3.dup
     cost_entry4.save!
     cost_entry4
   end
@@ -68,7 +88,9 @@ describe CostQuery, type: :model, reporting_query_helper: true do
       @query.group_by :cost_type_id
       expect(@query.all_group_fields).to eq(%w[entries.cost_type_id])
       expect(@query.child.all_group_fields).to eq(%w[entries.cost_type_id entries.work_package_id])
-      expect(@query.child.child.all_group_fields).to eq(%w[entries.cost_type_id entries.work_package_id entries.project_id])
+      expect(@query.child.child.all_group_fields).to eq(
+        %w[entries.cost_type_id entries.work_package_id entries.project_id]
+      )
     end
 
     it "should compute group_by WorkPackage" do

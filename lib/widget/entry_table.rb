@@ -129,16 +129,16 @@ class Widget::Table::EntryTable < Widget::Table
           ''.html_safe
           FIELDS.each do |field|
             concat content_tag(:td, show_field(field, result.fields[field.to_s]).html_safe,
-                               :'raw-data' => raw_field(field, result.fields[field.to_s]),
+                               'raw-data': raw_field(field, result.fields[field.to_s]),
                                class: 'left')
           end
           concat content_tag :td, show_result(result, result.fields['cost_type_id'].to_i).html_safe,
                              class: 'units right',
-                             :'raw-data' => result.units
+                             'raw-data': result.units
           concat content_tag :td,
                              (show_result(result, 0)).html_safe,
                              class: 'currency right',
-                             :'raw-data' => result.real_costs
+                             'raw-data': result.real_costs
           concat content_tag :td, icons(result)
         end)
       end
@@ -157,7 +157,6 @@ class Widget::Table::EntryTable < Widget::Table
         icons << link_to(icon_wrapper('icon-context icon-delete', l(:button_delete)),
                          (action_for(result, action: 'destroy')
                           .reverse_merge(authenticity_token: form_authenticity_token)),
-                         title: l(:button_edit),
                          data: { confirm: l(:text_are_you_sure) },
                          method: :delete,
                          class: 'no-decoration-on-hover',

@@ -107,7 +107,8 @@ class CostQuery::SqlStatement < Report::SqlStatement
   end
 
   ##
-  # Generates a statement based on all entries (i.e. time entries and cost entries) mapped to the general entries structure,
+  # Generates a statement based on all entries (i.e. time entries and cost entries)
+  # mapped to the general entries structure,
   # and therefore usable by filters and such.
   #
   # @return [CostQuery::SqlStatement] Generated statement

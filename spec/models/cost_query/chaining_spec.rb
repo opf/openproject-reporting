@@ -164,7 +164,7 @@ describe CostQuery, type: :model, reporting_query_helper: true do
       end
 
       it "should keep the right filter values" do
-        @query.filters.each_with_index do |filter, index|
+        @query.filters.each_with_index do |filter, _index|
           # check for presence
           expect(@new_query.filters.any? do |f|
             f.class.name == filter.class.name && (filter.respond_to?(:values) ? f.values == filter.values : true)

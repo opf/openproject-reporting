@@ -49,7 +49,7 @@ describe CostQuery::Cache do
   end
 
   def custom_fields_exist
-    allow(WorkPackageCustomField).to receive(:maximum).and_return(Time.now)
+    allow(WorkPackageCustomField).to receive(:maximum).and_return(Time.zone.now)
     allow(WorkPackageCustomField).to receive(:count).and_return(23)
   end
 

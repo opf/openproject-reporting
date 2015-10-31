@@ -123,7 +123,7 @@ Given /^I remove "([^\"]*)" from (rows|columns)/ do |group, source|
   find_by_id("#{element_name}_remove").click
 end
 
-Given /^I (delete|remove) the (cost|time) entry "([^\"]*)"$/ do |method, type, name|
+Given /^I (delete|remove) the (cost|time) entry "([^\"]*)"$/ do |_method, _type, name|
   begin
     find(:xpath, "//tr[td=#{name}]/td/a[@title='Delete']").click
   rescue Capybara::ElementNotFound

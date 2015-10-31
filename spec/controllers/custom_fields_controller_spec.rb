@@ -121,13 +121,14 @@ describe CustomFieldsController do
     context 'session' do
       let(:engine_name) { CostQuery.name.underscore.to_sym }
       let(:key) { :"custom_field#{custom_field.id}" }
-      let(:query) { { filters:
-                      {
-                        operators: { user_id: "=", key => "=" },
-                        values: { user_id: ["96"], key => "" }
-                      },
+      let(:query) { 
+                    { filters:
+                                  {
+                                    operators: { user_id: "=", key => "=" },
+                                    values: { user_id: ["96"], key => "" }
+                                  },
                       groups: { rows: [key.to_s], columns: [key.to_s] }
-                    }
+                                }
                   }
       before { session[engine_name] = query }
 
