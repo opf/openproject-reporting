@@ -1,5 +1,5 @@
 #-- copyright
-# OpenProject Reporting Plugin
+# ReportingEngine
 #
 # Copyright (C) 2010 - 2014 the OpenProject Foundation (OPF)
 #
@@ -17,8 +17,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #++
 
-module OpenProject
-  module Reporting
-    VERSION = "5.0.15"
+class CostQuery::GroupBy
+  class Base < Report::GroupBy::Base
+    # Exists solely for +Report::Chainable#base?+
   end
 end
