@@ -29,8 +29,6 @@ class Widget::Table::SimpleTable < Widget::Table
       concat foot
       concat body
     end
-    # FIXME do that js-only, like a man's man
-    render_widget Widget::Table::SortableInit, @subject, to: content
     write content.html_safe
   end
 
