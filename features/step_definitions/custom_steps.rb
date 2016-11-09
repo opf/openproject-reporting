@@ -101,25 +101,29 @@ end
 
 Then /^filter "([^\"]*)" should (not )?be visible$/ do |filter, negative|
   bool = negative ? false : true
-  page.evaluate_script("$('filter_#{filter}').visible()") =~ /^#{bool}$/
+  if bool
+    expect(page).to have_selector("#filter_#{filter}")
+  else
+    expect(page).to have_no_selector("#filter_#{filter}")
+  end
 end
 
 Then /^(?:|I )should not see "([^\"]*)" in (columns|rows)$/ do |text, axis|
-  page.all("fieldset#group_by_#{axis} span").each do |element|
+  page.all("fieldset#group-by--#{axis} span").each do |element|
     element.should_not have_content(text)
   end
 end
 
 Then /^(?:|I )should see "([^\"]*)" in (columns|rows)$/ do |text, axis|
-  page.should have_xpath(".//fieldset[@id='group_by_#{axis}']/span[contains(label,'#{text}')]")
+  step %{I should see "#{text}" within "#group-by--#{axis}"}
 end
 
 Given /^I group (rows|columns) by "([^\"]*)"/ do |target, group|
-  step %{I select "#{group}" from "add_group_by_#{target}" within "#group_by_#{target}"}
+  step %{I select "#{group}" from "group-by--add-#{target}" within "#group-by--#{target}"}
 end
 
 Given /^I remove "([^\"]*)" from (rows|columns)/ do |group, source|
-  element_name = find_by_id("group_by_#{source}").find("label", text: "#{group}")[:for]
+  element_name = find_by_id("group-by--#{source}").find("label", text: "#{group}")[:for]
   find_by_id("#{element_name}_remove").click
 end
 
